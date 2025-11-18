@@ -11,7 +11,6 @@ export class ProductController {
 
   async create(req: Request, res: Response): Promise<void> {
     try {
-      // Nota: A lógica de autorização (se o usuário é Admin/Supplier) deve estar AQUI ou no middleware.
       const data = req.body as CreateProductRequest;
       const result = await this.productService.createProduct(data);
 
