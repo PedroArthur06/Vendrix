@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ProductController } from "../controllers/product.controller";
-import { validateCreateProduct } from "../middlewares/validation.middleware";
+import { validateRequest } from "../../../../shared/infra/http/middlewares/validateRequest";
+import { createProductSchema } from "../schemas/product.schemas";
 import { authenticateToken } from "../../../../shared/infra/http/middlewares/auth.middleware";
 import { authorizeRoles } from "../../../../shared/infra/http/middlewares/authorization.middleware";
 
@@ -13,7 +14,7 @@ router.post(
   "/products",
   authenticateToken,
   authorizeRoles(["admin", "supplier"]),
-  validateCreateProduct,
+  validateRequest(createProductSchema),
   productController.create.bind(productController)
 );
 
