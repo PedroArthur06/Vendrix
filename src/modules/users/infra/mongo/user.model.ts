@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 import { User, UserProfile, Address } from "../../domain/user.types";
 
 const UserProfileSchema = new Schema<UserProfile>(
@@ -15,7 +15,9 @@ const UserProfileSchema = new Schema<UserProfile>(
   { _id: false }
 );
 
-const UserSchema = new Schema<User>(
+export type UserDocument = User & Document;
+
+const UserSchema = new Schema<UserDocument>(
   {
     email: {
       type: String,
@@ -26,6 +28,12 @@ const UserSchema = new Schema<User>(
     },
     passwordHash: {
       type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "customer", "supplier"],
+      default: "customer",
       required: true,
     },
     profile: {
@@ -47,4 +55,4 @@ const UserSchema = new Schema<User>(
   }
 );
 
-export const UserModel = model<User>("User", UserSchema);
+export const UserModel = model<UserDocument>("User", UserSchema);

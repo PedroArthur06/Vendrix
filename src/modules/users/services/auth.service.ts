@@ -1,12 +1,12 @@
 import bcrypt from "bcrypt";
 import jwt, { SignOptions } from "jsonwebtoken";
 import { UserModel } from "../infra/mongo/user.model";
-import { User } from "../domain/user.types";
+import { UserRole } from "../domain/user.types";
 import {
   RegisterRequest,
   LoginRequest,
   AuthResponse,
-} from "../types/request.types";
+} from "../dtos/request.types";
 
 export class AuthService {
   private readonly JWT_SECRET: string;
@@ -74,21 +74,23 @@ export class AuthService {
     };
   }
 
-  private generateToken(user: User): string {
+  private generateToken(user: any): string {
     const payload = {
       id: user.id,
       email: user.email,
+      role: user.role,
     };
     return jwt.sign(payload, this.JWT_SECRET, {
       expiresIn: this.JWT_EXPIRES_IN as any,
     });
   }
 
-  verifyToken(token: string): { id: string; email: string } {
+  verifyToken(token: string): { id: string; email: string; role: UserRole } {
     try {
       return jwt.verify(token, this.JWT_SECRET) as {
         id: string;
         email: string;
+        role: UserRole;
       };
     } catch (error) {
       throw new Error("Invalid or expired token");
