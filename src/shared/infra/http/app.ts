@@ -5,6 +5,7 @@ import helmet from "helmet";
 import authRoutes from "../../../modules/users/http/routes/auth.routes";
 import userRoutes from "../../../modules/users/http/routes/user.routes";
 import productRoutes from "../../../modules/products/http/routes/product.routes";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const app = express();
 
@@ -22,5 +23,7 @@ app.get("/health", (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+app.use(errorHandler);
 
 export { app };

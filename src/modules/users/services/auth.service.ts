@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../../shared/infra/database";
 import { UserRole } from "../domain/user.types";
+import { AppError } from "../../../shared/errors/AppError";
 import {
   RegisterRequest,
   LoginRequest,
@@ -18,7 +19,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new Error("User with this email already exists");
+      throw new AppError("User with this email already exists", 409);
     }
 
     const passwordHash = await bcrypt.hash(data.password, 10);
@@ -74,7 +75,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new Error("Invalid email or password");
+      throw new AppError("Invalid email or password", 401);
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -82,7 +83,7 @@ export class AuthService {
       user.passwordHash
     );
     if (!isPasswordValid) {
-      throw new Error("Invalid email or password");
+      throw new AppError("Invalid email or password", 401);
     }
 
     const token = this.generateToken(user);
