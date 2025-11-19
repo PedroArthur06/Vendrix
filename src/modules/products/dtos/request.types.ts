@@ -19,3 +19,11 @@ export interface ProductResponse {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface UpdateProductRequest {
+  name?: string;
+  description?: string;
+  price?: number;
+  stock?: number;
+  categoryId?: string;
+}
