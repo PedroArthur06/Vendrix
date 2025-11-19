@@ -1,3 +1,4 @@
+export type UserRole = "admin" | "customer" | "supplier";
 export interface Address {
   street: string;
   city: string;
@@ -18,4 +19,7 @@ export interface User {
   profile: UserProfile;
   createdAt: Date;
   updatedAt: Date;
+  role: UserRole;
 }
+
+export type UserWithoutPassword = Omit<User, "passwordHash">;
