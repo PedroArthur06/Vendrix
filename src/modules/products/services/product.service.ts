@@ -1,6 +1,10 @@
 import { Product } from "@prisma/client";
 import { prisma } from "../../../shared/infra/database";
-import { CreateProductRequest, ProductResponse } from "../dtos/request.types";
+import {
+  CreateProductRequest,
+  ProductResponse,
+  UpdateProductRequest,
+} from "../dtos/request.types";
 
 export class ProductService {
   private mapToProductResponse(
@@ -20,7 +24,10 @@ export class ProductService {
     };
   }
 
-  async createProduct(data: CreateProductRequest): Promise<ProductResponse> {
+  async createProduct(
+    data: CreateProductRequest,
+    supplierId: string
+  ): Promise<ProductResponse> {
     const existingProduct = await prisma.product.findUnique({
       where: { sku: data.sku },
     });
@@ -43,6 +50,7 @@ export class ProductService {
         sku: data.sku,
         stock: data.stock || 0,
         categoryId: data.categoryId,
+        supplierId: supplierId,
       },
       include: {
         category: {
@@ -68,5 +76,47 @@ export class ProductService {
     });
 
     return products.map((p: any) => this.mapToProductResponse(p));
+  }
+
+  async updateProduct(
+    productId: string,
+    data: UpdateProductRequest,
+    supplierId: string
+  ): Promise<ProductResponse> {
+    try {
+      const updatedProduct = await prisma.product.update({
+        where: {
+          id: productId,
+          supplierId: supplierId,
+        },
+        data: {
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          stock: data.stock,
+          categoryId: data.categoryId,
+        },
+        include: {
+          category: { select: { name: true } },
+        },
+      });
+
+      return this.mapToProductResponse(updatedProduct as any);
+    } catch (error) {
+      throw new Error("Product not found or access denied.");
+    }
+  }
+
+  async deleteProduct(productId: string, supplierId: string): Promise<void> {
+    try {
+      await prisma.product.delete({
+        where: {
+          id: productId,
+          supplierId: supplierId,
+        },
+      });
+    } catch (error) {
+      throw new Error("Product not found or access denied.");
+    }
   }
 }
