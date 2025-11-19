@@ -1,5 +1,5 @@
-import { Product } from "@prisma/client";
 import { prisma } from "../../../shared/infra/database";
+import { AppError } from "../../../shared/errors/AppError";
 import {
   CreateProductRequest,
   ProductResponse,
@@ -7,18 +7,16 @@ import {
 } from "../dtos/request.types";
 
 export class ProductService {
-  private mapToProductResponse(
-    product: Product & { category: { name: string } }
-  ): ProductResponse {
+  private mapToProductResponse(product: any): ProductResponse {
     return {
       id: product.id,
       name: product.name,
       description: product.description,
-      price: product.price.toNumber(),
+      price: Number(product.price),
       sku: product.sku,
       stock: product.stock,
       categoryId: product.categoryId,
-      categoryName: product.category.name,
+      categoryName: product.category?.name,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
     };
@@ -31,15 +29,17 @@ export class ProductService {
     const existingProduct = await prisma.product.findUnique({
       where: { sku: data.sku },
     });
+
     if (existingProduct) {
-      throw new Error("Product with this SKU already exists");
+      throw new AppError("Product with this SKU already exists", 409);
     }
 
     const category = await prisma.category.findUnique({
       where: { id: data.categoryId },
     });
+
     if (!category) {
-      throw new Error("Category not found");
+      throw new AppError("Category not found", 404);
     }
 
     const newProduct = await prisma.product.create({
@@ -50,32 +50,23 @@ export class ProductService {
         sku: data.sku,
         stock: data.stock || 0,
         categoryId: data.categoryId,
-        supplierId: supplierId,
+        // supplierId: supplierId,
       },
       include: {
-        category: {
-          select: {
-            name: true,
-          },
-        },
+        category: { select: { name: true } },
       },
     });
 
-    return this.mapToProductResponse(newProduct as any);
+    return this.mapToProductResponse(newProduct);
   }
 
   async findAllProducts(): Promise<ProductResponse[]> {
     const products = await prisma.product.findMany({
       include: {
-        category: {
-          select: {
-            name: true,
-          },
-        },
+        category: { select: { name: true } },
       },
     });
-
-    return products.map((p: any) => this.mapToProductResponse(p));
+    return products.map((p) => this.mapToProductResponse(p));
   }
 
   async updateProduct(
@@ -83,40 +74,42 @@ export class ProductService {
     data: UpdateProductRequest,
     supplierId: string
   ): Promise<ProductResponse> {
-    try {
-      const updatedProduct = await prisma.product.update({
-        where: {
-          id: productId,
-          supplierId: supplierId,
-        },
-        data: {
-          name: data.name,
-          description: data.description,
-          price: data.price,
-          stock: data.stock,
-          categoryId: data.categoryId,
-        },
-        include: {
-          category: { select: { name: true } },
-        },
-      });
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
 
-      return this.mapToProductResponse(updatedProduct as any);
-    } catch (error) {
-      throw new Error("Product not found or access denied.");
+    if (!product) {
+      throw new AppError("Product not found", 404);
     }
+
+    // if (product.supplierId !== supplierId) throw new AppError("Forbidden", 403);
+
+    const updatedProduct = await prisma.product.update({
+      where: { id: productId },
+      data: {
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        stock: data.stock,
+        categoryId: data.categoryId,
+      },
+      include: { category: { select: { name: true } } },
+    });
+
+    return this.mapToProductResponse(updatedProduct);
   }
 
   async deleteProduct(productId: string, supplierId: string): Promise<void> {
-    try {
-      await prisma.product.delete({
-        where: {
-          id: productId,
-          supplierId: supplierId,
-        },
-      });
-    } catch (error) {
-      throw new Error("Product not found or access denied.");
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      throw new AppError("Product not found", 404);
     }
+
+    await prisma.product.delete({
+      where: { id: productId },
+    });
   }
 }
