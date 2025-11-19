@@ -1,17 +1,6 @@
 version: "3.8"
 
 services:
-  mongodb:
-    image: mongo:6.0
-    container_name: vendrix_mongo
-    restart: always
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_DATABASE: vendrix-users
-    volumes:
-      - mongo_data:/data/db
-
   postgres:
     image: postgres:15-alpine
     container_name: vendrix_postgres
@@ -21,10 +10,9 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: adminpassword
-      POSTGRES_DB: vendrix-products
+      POSTGRES_DB: vendrix
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  mongo_data:
   postgres_data:

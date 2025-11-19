@@ -1,32 +1,68 @@
-import { UserModel } from "../infra/mongo/user.model";
+import { prisma } from "../../../shared/infra/database";
 import { User, UserRole } from "../domain/user.types";
 
 export class UserService {
+  private mapToDomainUser(prismaUser: any): User {
+    return {
+      id: prismaUser.id,
+      email: prismaUser.email,
+      passwordHash: prismaUser.passwordHash,
+      role: prismaUser.role as UserRole,
+      createdAt: prismaUser.createdAt,
+      updatedAt: prismaUser.updatedAt,
+      profile: {
+        name: prismaUser.name,
+        lastName: prismaUser.lastName || undefined,
+        phone: prismaUser.phone || undefined,
+        address: prismaUser.address
+          ? {
+              street: prismaUser.address.street,
+              city: prismaUser.address.city,
+              zipCode: prismaUser.address.zipCode,
+            }
+          : undefined,
+      },
+    };
+  }
+
   async getProfileById(userId: string): Promise<User | null> {
-    const user = await UserModel.findById(userId);
-    return user?.toJSON() as User | null;
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { address: true },
+    });
+
+    if (!user) return null;
+
+    return this.mapToDomainUser(user);
   }
 
   async updateRole(userId: string, newRole: UserRole): Promise<User | null> {
-    const user = await UserModel.findById(userId);
-
-    if (!user) {
-      return null;
-    }
-
     const validRoles: UserRole[] = ["admin", "customer", "supplier"];
     if (!validRoles.includes(newRole)) {
       throw new Error("Invalid user role provided.");
     }
 
-    user.role = newRole;
-    await user.save();
+    try {
+      const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: { role: newRole },
+        include: { address: true },
+      });
 
-    return user.toJSON() as User;
+      return this.mapToDomainUser(updatedUser);
+    } catch (error) {
+      return null;
+    }
   }
 
   async getProfileByEmail(email: string): Promise<User | null> {
-    const user = await UserModel.findOne({ email: email.toLowerCase() });
-    return user;
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      include: { address: true },
+    });
+
+    if (!user) return null;
+
+    return this.mapToDomainUser(user);
   }
 }
