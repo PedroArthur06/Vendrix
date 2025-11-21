@@ -54,7 +54,7 @@ model Product {
   price       Decimal  @db.Decimal(10, 2)
   sku         String   @unique
   stock       Int      @default(0)
-  
+  imageUrl    String
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id])
 
