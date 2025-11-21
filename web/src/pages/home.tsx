@@ -4,6 +4,7 @@ import GradientText from "@/components/ui/GradientText";
 import { Products } from "../assets/img/index";
 import StarBorder from "@/components/ui/StarBorder";
 import { ProductCard } from "../components/ui/ProductCard";
+import { useProducts } from "@/hooks/useProducts";
 import {
   Search,
   ShoppingBag,
@@ -75,6 +76,7 @@ const MenuItem = ({
 export function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: products, isLoading, isError } = useProducts();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -270,34 +272,39 @@ export function Home() {
 
         <div className="mt-32">
           <div className="flex items-center justify-between mb-10">
-            <h2 className="text-2xl font-bold text-white">Mais Vendidos</h2>
-            <a
-              href="#"
+            <h2 className="text-2xl font-bold text-white">
+              {isLoading ? "Carregando Catalogo..." : "Catálogo Disponível"}
+            </h2>
+            <Link
+              to="/products"
               className="text-brand hover:underline flex items-center gap-1"
             >
               Ver todos <ArrowRight className="w-4 h-4" />
-            </a>
+            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <ProductCard
-              name="Nike Air Max Future"
-              price="R$ 1.299,90"
-              image={Products.nike}
-            />
+          {isError ? (
+            <div className="text-red-500">
+              Erro ao carregar produtos. Verifique se o servidor está rodando.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {products?.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  name={product.name}
+                  price={product.price}
+                  image={product.imageUrl}
+                />
+              ))}
 
-            <ProductCard
-              name="Adidas Ultraboost X"
-              price="R$ 999,90"
-              image={Products.adidas}
-            />
-
-            <ProductCard
-              name="Yeezy Quantum Green"
-              price="R$ 2.499,00"
-              image={Products.yeezy}
-            />
-          </div>
+              {(!products || products.length === 0) && !isLoading && (
+                <p className="text-zinc-500 col-span-3 text-center">
+                  Nenhum produto encontrado no sistema.
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </main>
     </div>
