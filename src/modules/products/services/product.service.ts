@@ -114,4 +114,19 @@ export class ProductService {
       where: { id: productId },
     });
   }
+
+  async findProductById(id: string): Promise<ProductResponse> {
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        category: { select: { name: true } },
+      },
+    });
+
+    if (!product) {
+      throw new AppError("Product not found", 404);
+    }
+
+    return this.mapToProductResponse(product);
+  }
 }
