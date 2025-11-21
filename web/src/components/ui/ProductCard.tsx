@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button";
-
+import { formatPrice } from "@/utils/formatPrice";
 interface ProductCardProps {
   name: string;
-  price: string;
+  price: number | string;
   image: string;
 }
 
 export function ProductCard({ name, price, image }: ProductCardProps) {
+  const formattedPrice = formatPrice(price);
+
   return (
     <div className="group relative flex flex-col rounded-2xl bg-neumo-bg p-6 shadow-neumo-flat transition-all hover:-translate-y-2 hover:shadow-lg hover:shadow-brand/10">
       <div className="aspect-square w-full flex items-center justify-center mb-4 bg-neumo-bg rounded-xl shadow-neumo-pressed overflow-hidden relative p-6">
@@ -21,7 +23,7 @@ export function ProductCard({ name, price, image }: ProductCardProps) {
 
       <div className="mt-2">
         <h3 className="text-lg font-bold text-white mb-1 truncate">{name}</h3>
-        <p className="text-brand font-medium text-lg">{price}</p>
+        <p className="text-brand font-medium text-lg">{formattedPrice}</p>
       </div>
 
       <Button className="mt-6 w-full h-12 bg-neumo-bg text-zinc-400 border border-white/5 shadow-neumo-flat hover:text-white hover:bg-brand hover:border-brand active:scale-95 transition-all font-semibold tracking-wide">
