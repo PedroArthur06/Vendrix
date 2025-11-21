@@ -5,6 +5,7 @@ import { SignUp } from "./pages/auth/sign-up";
 import { Toaster } from "@/components/ui/sonner";
 import { Home } from "./pages/home";
 import { AppLayout } from "./pages/_layouts/app-layout";
+import { ProductDetails } from "./pages/product-details";
 
 const queryClient = new QueryClient();
 export function App() {
@@ -16,7 +17,7 @@ export function App() {
 
           <Route path="/login" element={<SignIn />} />
           <Route path="/register" element={<SignUp />} />
-
+          <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/admin" element={<AppLayout />}>
             {" "}
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
