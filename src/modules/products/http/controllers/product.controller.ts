@@ -46,4 +46,10 @@ export class ProductController {
     await this.productService.deleteProduct(productId, supplierId);
     res.status(204).send();
   }
+
+  async findOne(req: Request, res: Response): Promise<void> {
+    const { id } = req.params;
+    const product = await this.productService.findProductById(id);
+    res.status(200).json(product);
+  }
 }
