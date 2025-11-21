@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useCartStore } from "@/stores/cart-store";
 
 const SNEAKER_BRANDS = [
   { name: "Nike", href: "#" },
@@ -77,6 +78,7 @@ export function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: products, isLoading, isError } = useProducts();
+  const cartCount = useCartStore((state) => state.count());
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -157,7 +159,11 @@ export function Home() {
                   className="text-zinc-400 hover:text-white hover:bg-white/5 relative transition-all"
                 >
                   <ShoppingBag className="w-5 h-5" />
-                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-brand rounded-full shadow-[0_0_8px_#43BBA8]"></span>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-brand text-neumo-bg text-xs font-bold rounded-full flex items-center justify-center shadow-[0_0_8px_#43BBA8]">
+                      {cartCount}
+                    </span>
+                  )}
                 </Button>
 
                 <Button

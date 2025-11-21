@@ -12,6 +12,8 @@ import {
   Heart,
 } from "lucide-react";
 import type { Product } from "@/hooks/useProducts";
+import { useCartStore } from "@/stores/cart-store";
+import { toast } from "sonner";
 
 export function ProductDetails() {
   const { id } = useParams();
@@ -29,6 +31,28 @@ export function ProductDetails() {
     enabled: !!id,
     retry: false,
   });
+
+  const addToCart = useCartStore((state) => state.addToCart);
+
+  function handleAddToCart() {
+    if (!product) return;
+
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: Number(product.price),
+      image: product.imageUrl,
+      quantity: 1,
+    });
+
+    toast.success("Adicionado ao carrinho!", {
+      description: `${product.name} já está na sua sacola.`,
+      action: {
+        label: "Ver Sacola",
+        onClick: () => console.log("Ir para sacola"),
+      },
+    });
+  }
 
   if (isLoading) {
     return (
@@ -67,7 +91,6 @@ export function ProductDetails() {
 
   return (
     <div className="min-h-screen bg-neumo-bg text-neumo-text font-sans pb-20">
-      {/* Navbar Simplificada para Contexto */}
       <header className="h-16 border-b border-white/5 flex items-center px-6 lg:px-32 sticky top-0 bg-neumo-bg/95 backdrop-blur-md z-50">
         <Link
           to="/"
@@ -158,7 +181,10 @@ export function ProductDetails() {
             </div>
 
             <div className="pt-6 flex flex-col gap-4">
-              <Button className="w-full h-14 bg-brand text-neumo-bg font-extrabold text-lg hover:bg-brand/90 hover:scale-[1.01] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(67,187,168,0.2)] rounded-xl">
+              <Button
+                onClick={handleAddToCart}
+                className="w-full h-14 bg-brand text-neumo-bg font-extrabold text-lg hover:bg-brand/90 hover:scale-[1.01] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(67,187,168,0.2)] rounded-xl"
+              >
                 <ShoppingBag className="w-5 h-5 mr-2" />
                 Adicionar ao Carrinho
               </Button>
