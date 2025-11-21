@@ -62,6 +62,37 @@ export default {
         "neumo-pressed":
           "inset 6px 6px 12px #151515, inset -6px -6px 12px #2d2d2d",
       },
+      animation: {
+        "slide-up": "slideUp 0.3s ease-out forwards",
+        "slide-down": "slideDown 0.3s ease-out forwards",
+        gradient: "gradient 8s linear infinite",
+        "star-movement-bottom":
+          "star-movement-bottom linear infinite alternate",
+        "star-movement-top": "star-movement-top linear infinite alternate",
+      },
+      keyframes: {
+        slideUp: {
+          "0%": { transform: "translateY(10px)", opacity: 0 },
+          "100%": { transform: "translateY(0)", opacity: 1 },
+        },
+        slideDown: {
+          "0%": { transform: "translateY(-10px)", opacity: 0 },
+          "100%": { transform: "translateY(0)", opacity: 1 },
+        },
+        gradient: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
+        "star-movement-bottom": {
+          "0%": { transform: "translate(0%, 0%)", opacity: "1" },
+          "100%": { transform: "translate(-100%, 0%)", opacity: "0" },
+        },
+        "star-movement-top": {
+          "0%": { transform: "translate(0%, 0%)", opacity: "1" },
+          "100%": { transform: "translate(100%, 0%)", opacity: "0" },
+        },
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
