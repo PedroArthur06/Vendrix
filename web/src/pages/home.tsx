@@ -1,74 +1,244 @@
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search, ShoppingBag, User, ArrowRight } from "lucide-react";
+import GradientText from "@/components/ui/GradientText";
+import { Products } from "../assets/img/index";
+import StarBorder from "@/components/ui/StarBorder";
+import { ProductCard } from "../components/ui/ProductCard";
+import {
+  Search,
+  ShoppingBag,
+  User,
+  Menu,
+  X,
+  ChevronDown,
+  Lock,
+  ArrowRight,
+} from "lucide-react";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
+
+const SNEAKER_BRANDS = [
+  { name: "Nike", href: "#" },
+  { name: "Adidas", href: "#" },
+  { name: "Yeezy", href: "#" },
+  { name: "New Balance", href: "#" },
+  { name: "Puma", href: "#" },
+  { name: "Vans", href: "#" },
+];
+
+const MenuItem = ({
+  title,
+  items,
+}: {
+  title: string;
+  items?: { name: string; href: string }[];
+}) => {
+  return (
+    <div className="group relative h-full flex items-center">
+      <a
+        href="#"
+        className="relative flex items-center gap-1 px-2 py-2 text-sm font-medium text-zinc-400 transition-colors duration-300 group-hover:text-white"
+      >
+        {title}
+        {items && (
+          <ChevronDown className="w-3 h-3 transition-transform duration-300 group-hover:rotate-180 text-brand/70" />
+        )}
+
+        <span className="absolute bottom-0 left-0 h-[2px] w-0 bg-brand shadow-[0_0_10px_#43BBA8] transition-all duration-300 group-hover:w-full" />
+      </a>
+
+      {items && (
+        <div className="absolute top-full left-0 pt-4 w-48 opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 ease-out z-50">
+          <div className="bg-[#0a0a0a]/95 backdrop-blur-xl border border-zinc-800 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] overflow-hidden">
+            <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-brand/50 to-transparent" />
+            <div className="p-2 flex flex-col gap-1">
+              {items.map((brand) => (
+                <a
+                  key={brand.name}
+                  href={brand.href}
+                  className="flex items-center justify-between px-4 py-2.5 text-sm text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-all group/item"
+                >
+                  {brand.name}
+                  <span className="opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all text-brand">
+                    →
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export function Home() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-neumo-bg text-neumo-text font-sans selection:bg-brand selection:text-white pb-20">
-      <header className="sticky top-0 z-50 px-6 py-4">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex items-center justify-between rounded-2xl bg-neumo-bg px-6 py-3 shadow-neumo-flat">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-brand shadow-neumo-pressed flex items-center justify-center">
-                <span className="font-bold text-neumo-bg">V</span>
+      <header
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b border-transparent",
+          isScrolled
+            ? "bg-neumo-bg/95 backdrop-blur-md border-zinc-800 py-2 shadow-lg"
+            : "bg-transparent py-6"
+        )}
+      >
+        <div
+          className={cn(
+            "absolute top-0 w-full border-b border-white/5 bg-black/40 transition-opacity duration-300 hidden md:block",
+            isScrolled ? "opacity-0 pointer-events-none" : "opacity-100"
+          )}
+        >
+          <div className="max-w-7xl mx-auto px-6 h-8 flex items-center justify-between text-[10px] uppercase tracking-widest text-zinc-500">
+            <div className="flex items-center gap-2 hover:text-brand transition-colors cursor-pointer">
+              <Lock className="w-3 h-3" />
+              <span>Grupo VIP Exclusivo</span>
+            </div>
+            <span>Frete Grátis para todo o Brasil</span>
+          </div>
+        </div>
+
+        <div className="mx-auto max-w-7xl px-6 mt-4 md:mt-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 group cursor-pointer z-50">
+              <div className="h-10 w-10 rounded-xl bg-brand flex items-center justify-center relative overflow-hidden shadow-[0_0_20px_rgba(67,187,168,0.3)]">
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <span className="font-bold text-neumo-bg text-xl relative z-10">
+                  V
+                </span>
               </div>
-              <span className="text-xl font-bold tracking-tighter text-white">
+              <span className="text-2xl font-bold tracking-tighter text-white transition-all duration-500">
                 VENDRIX
               </span>
             </div>
 
-            <div className="hidden md:flex w-1/3 relative">
-              <Input
-                placeholder="Buscar sneakers..."
-                className="h-10 rounded-full border-none bg-neumo-bg pl-10 text-sm shadow-neumo-pressed focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-            </div>
+            <nav className="hidden lg:flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
+              <MenuItem title="Lançamentos" />
+              <MenuItem title="Sneakers" items={SNEAKER_BRANDS} />
+              <MenuItem title="Vestuário" />
+              <MenuItem title="Acessórios" />
+            </nav>
 
-            <div className="flex items-center gap-4">
-              <Link to="/login">
+            <div className="flex items-center gap-6 z-50">
+              <div className="hidden md:flex items-center group bg-zinc-900/80 rounded-full px-4 py-2 border border-zinc-800 focus-within:border-brand focus-within:shadow-[0_0_15px_rgba(67,187,168,0.4)] transition-all duration-300">
+                <Search className="w-4 h-4 text-zinc-400 group-focus-within:text-brand transition-colors" />
+                <input
+                  type="text"
+                  placeholder="Buscar..."
+                  className="bg-transparent border-none outline-none text-sm text-white ml-2 w-24 focus:w-64 transition-all duration-500 placeholder:text-zinc-600"
+                />
+              </div>
+
+              <div className="flex items-center gap-4">
+                <Link to="/login">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
+                  >
+                    <User className="w-5 h-5" />
+                  </Button>
+                </Link>
+
                 <Button
+                  variant="ghost"
                   size="icon"
-                  className="rounded-full bg-neumo-bg shadow-neumo-flat hover:shadow-neumo-pressed text-zinc-400 hover:text-brand transition-all"
+                  className="text-zinc-400 hover:text-white hover:bg-white/5 relative transition-all"
                 >
-                  <User className="h-5 w-5" />
+                  <ShoppingBag className="w-5 h-5" />
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-brand rounded-full shadow-[0_0_8px_#43BBA8]"></span>
                 </Button>
-              </Link>
-              <Button
-                size="icon"
-                className="rounded-full bg-neumo-bg shadow-neumo-flat hover:shadow-neumo-pressed text-zinc-400 hover:text-brand transition-all"
-              >
-                <ShoppingBag className="h-5 w-5" />
-              </Button>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="lg:hidden text-zinc-400"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                  {isMobileMenuOpen ? (
+                    <X className="w-6 h-6" />
+                  ) : (
+                    <Menu className="w-6 h-6" />
+                  )}
+                </Button>
+              </div>
             </div>
+          </div>
+        </div>
+
+        <div
+          className={cn(
+            "fixed inset-0 bg-[#0a0a0a]/98 backdrop-blur-xl z-40 flex flex-col pt-32 px-8 transition-all duration-500 lg:hidden",
+            isMobileMenuOpen
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 -translate-y-full pointer-events-none"
+          )}
+        >
+          <div className="flex flex-col gap-6">
+            <input
+              type="text"
+              placeholder="O que você procura?"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-4 text-white focus:border-brand outline-none mb-4"
+            />
+            {["Lançamentos", "Sneakers", "Vestuário", "Acessórios", "Sale"].map(
+              (item) => (
+                <a
+                  key={item}
+                  href="#"
+                  className="text-2xl font-bold text-zinc-500 hover:text-white hover:translate-x-2 transition-all duration-300 border-b border-white/5 pb-4 flex justify-between items-center group"
+                >
+                  {item}
+                  <ArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all text-brand" />
+                </a>
+              )
+            )}
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-6 pt-10 lg:pt-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <main className="mx-auto max-w-[1440px] px-6 lg:px-32 pt-32 lg:pt-40">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center lg:ml-auto">
           <div className="space-y-6">
             <div className="inline-block rounded-full bg-neumo-bg px-4 py-1.5 text-sm font-medium text-brand shadow-neumo-pressed">
               Nova Coleção 2025
             </div>
             <h1 className="text-5xl font-extrabold tracking-tight text-white lg:text-7xl">
               WALK THE <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-light">
+              <GradientText
+                colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
+                animationSpeed={3}
+                showBorder={false}
+                className="text-5xl lg:text-7xl uppercase"
+              >
                 FUTURE
-              </span>
+              </GradientText>
             </h1>
             <p className="max-w-md text-lg text-zinc-400">
               Tecnologia de ponta e design disruptivo. Descubra os sneakers que
               vão redefinir o seu caminhar.
             </p>
             <div className="flex gap-4 pt-4">
-              <Button className="h-12 px-8 rounded-xl bg-brand text-neumo-bg font-bold shadow-neumo-flat hover:brightness-110 transition-all active:scale-95">
+              <StarBorder
+                as="button"
+                className="h-14 w-auto min-w-[180px]"
+                color="#43BBA8"
+                speed="4s"
+              >
                 Explorar Loja
-              </Button>
+              </StarBorder>
+
               <Button
                 variant="outline"
-                className="h-12 px-8 rounded-xl border-none bg-neumo-bg text-white shadow-neumo-flat hover:shadow-neumo-pressed transition-all"
+                className="h-14 px-8 rounded-[20px] border-white/10 bg-transparent text-white hover:bg-white/5 hover:text-brand transition-all"
               >
                 Ver Detalhes
               </Button>
@@ -78,11 +248,22 @@ export function Home() {
           <div className="relative flex justify-center">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-brand/10 blur-3xl"></div>
 
-            <div className="relative w-full max-w-md aspect-square rounded-3xl bg-neumo-bg shadow-neumo-flat flex items-center justify-center p-8 transform hover:scale-105 transition-transform duration-500">
-              <img
-                src="https://img.pikbest.com/ai/illus_our/20230427/cec88ae2078344d69bd730283c951277.jpg!w700wp"
-                className="w-full h-auto drop-shadow-2xl object-contain -rotate-12 hover:rotate-0 transition-all duration-500"
-              />
+            <div className="relative flex justify-center items-center py-12 lg:py-0 perspective-1000">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] rounded-full bg-brand/20 blur-[80px] animate-pulse-slow pointer-events-none"></div>
+
+              <div className="absolute w-[400px] h-[400px] border border-white/5 rounded-full animate-[spin_10s_linear_infinite] pointer-events-none"></div>
+              <div className="absolute w-[300px] h-[300px] border border-brand/10 rounded-full animate-[spin_15s_linear_infinite_reverse] pointer-events-none"></div>
+
+              <div className="relative z-10 animate-float">
+                <img
+                  src={Products.hero}
+                  alt="Sneaker do Futuro"
+                  className="w-full max-w-[1200px] h-auto object-contain drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)] filter brightness-110"
+                  style={{ transform: "rotate(-15deg)" }}
+                />
+
+                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-2/3 h-4 bg-black/40 blur-xl rounded-[100%] animate-shadow-breath"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -102,49 +283,23 @@ export function Home() {
             <ProductCard
               name="Nike Air Max Future"
               price="R$ 1.299,90"
-              image="https://citymagazine.b-cdn.net/wp-content/uploads/2019/04/nike-throwback-future-pack-air-max-270-1.jpg"
+              image={Products.nike}
             />
 
             <ProductCard
               name="Adidas Ultraboost X"
               price="R$ 999,90"
-              image="https://lh5.googleusercontent.com/proxy/sqq8m-mJMXirRa9_AejuL9GHrz_nHfzj7zLehCMG3sqN8vFuV6w6V91kxj1HMoIBb8suPq5ULHsSJalWb9VLVybivx-bsB6YUsw64an8G_CpyDILg-Jrg_qcZN1zQA"
+              image={Products.adidas}
             />
+
             <ProductCard
               name="Yeezy Quantum Green"
               price="R$ 2.499,00"
-              image="https://png.pngtree.com/png-vector/20240612/ourmid/pngtree-modern-running-shoes-isolated-on-transparent-background-png-image_12724817.png"
+              image={Products.yeezy}
             />
           </div>
         </div>
       </main>
-    </div>
-  );
-}
-
-function ProductCard({
-  name,
-  price,
-  image,
-}: {
-  name: string;
-  price: string;
-  image: string;
-}) {
-  return (
-    <div className="group relative flex flex-col rounded-2xl bg-neumo-bg p-6 shadow-neumo-flat transition-all hover:-translate-y-2">
-      <div className="h-48 flex items-center justify-center mb-4 bg-neumo-bg rounded-xl shadow-neumo-pressed overflow-hidden relative">
-        <img
-          src={image}
-          alt={name}
-          className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-300"
-        />
-      </div>
-      <h3 className="text-lg font-bold text-white mb-1">{name}</h3>
-      <p className="text-brand font-medium">{price}</p>
-      <Button className="mt-4 w-full bg-neumo-bg text-white shadow-neumo-flat hover:text-brand hover:shadow-neumo-pressed active:scale-95 transition-all">
-        Comprar
-      </Button>
     </div>
   );
 }
