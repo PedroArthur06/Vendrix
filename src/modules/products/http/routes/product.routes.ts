@@ -10,6 +10,8 @@ const productController = new ProductController();
 
 router.get("/products", productController.findAll.bind(productController));
 
+router.get("/products/:id", productController.findOne.bind(productController));
+
 router.post(
   "/products",
   authenticateToken,
