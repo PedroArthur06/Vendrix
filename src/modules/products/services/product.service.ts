@@ -19,6 +19,7 @@ export class ProductService {
       categoryName: product.category?.name,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
+      imageUrl: product.imageUrl,
     };
   }
 
@@ -51,6 +52,7 @@ export class ProductService {
         stock: data.stock || 0,
         categoryId: data.categoryId,
         // supplierId: supplierId,
+        imageUrl: data.imageUrl,
       },
       include: {
         category: { select: { name: true } },

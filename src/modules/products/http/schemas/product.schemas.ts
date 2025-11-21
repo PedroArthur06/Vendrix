@@ -11,4 +11,5 @@ export const createProductSchema = z.object({
     .int("Stock must be an integer")
     .nonnegative("Stock cannot be negative")
     .default(0),
+  imageUrl: z.string().url("Must be a valid URL"),
 });

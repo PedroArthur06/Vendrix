@@ -5,6 +5,7 @@ export interface CreateProductRequest {
   sku: string;
   stock?: number;
   categoryId: string;
+  imageUrl: string;
 }
 
 export interface ProductResponse {
@@ -18,6 +19,7 @@ export interface ProductResponse {
   categoryName: string;
   createdAt: Date;
   updatedAt: Date;
+  imageUrl: string;
 }
 
 export interface UpdateProductRequest {
