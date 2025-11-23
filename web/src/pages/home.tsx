@@ -18,6 +18,7 @@ import {
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart-store";
+import { CartSheet } from "@/components/ui/cart-sheet";
 
 const SNEAKER_BRANDS = [
   { name: "Nike", href: "#" },
@@ -153,18 +154,7 @@ export function Home() {
                   </Button>
                 </Link>
 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-zinc-400 hover:text-white hover:bg-white/5 relative transition-all"
-                >
-                  <ShoppingBag className="w-5 h-5" />
-                  {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-brand text-neumo-bg text-xs font-bold rounded-full flex items-center justify-center shadow-[0_0_8px_#43BBA8]">
-                      {cartCount}
-                    </span>
-                  )}
-                </Button>
+                <CartSheet />
 
                 <Button
                   variant="ghost"
