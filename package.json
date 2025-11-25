@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/PedroArthur06/Vendrix#readme",
   "dependencies": {
-    "@prisma/client": "^6.19.0",
+    "@prisma/client": "5.22.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -30,7 +30,6 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3",
-    "prisma": "^6.19.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
@@ -41,6 +40,7 @@
     "@types/node": "^24.10.1",
     "@types/supertest": "^6.0.3",
     "dotenv-cli": "^11.0.0",
+    "prisma": "5.22.0",
     "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
