@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import GradientText from "@/components/ui/GradientText";
-import { Products } from "../assets/img/index";
+import { Products } from "../assets/index";
 import StarBorder from "@/components/ui/StarBorder";
 import { ProductCard } from "../components/ui/ProductCard";
 import { useProducts } from "@/hooks/useProducts";
@@ -139,7 +139,7 @@ export function Home() {
                 <input
                   type="text"
                   placeholder="Buscar..."
-                  className="bg-transparent border-none outline-none text-sm text-white ml-2 w-24 focus:w-64 transition-all duration-500 placeholder:text-zinc-600"
+                  className="bg-transparent border-none outline-none text-sm text-white ml-2 w-24 focus:w-48 transition-all duration-500 placeholder:text-zinc-600"
                 />
               </div>
 
@@ -187,7 +187,7 @@ export function Home() {
               placeholder="O que você procura?"
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-4 text-white focus:border-brand outline-none mb-4"
             />
-            {["Lançamentos", "Sneakers", "Vestuário", "Acessórios", "Sale"].map(
+            {["Lançamentos", "Sneakers", "Vestuário", "Acessórios"].map(
               (item) => (
                 <a
                   key={item}
@@ -227,7 +227,7 @@ export function Home() {
             <div className="flex gap-4 pt-4">
               <StarBorder
                 as="button"
-                className="h-14 w-auto min-w-[180px]"
+                className="h-16 w-auto min-w-[180px]"
                 color="#43BBA8"
                 speed="4s"
               >
@@ -256,7 +256,7 @@ export function Home() {
                 <img
                   src={Products.hero}
                   alt="Sneaker do Futuro"
-                  className="w-full max-w-[1200px] h-auto object-contain drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)] filter brightness-110"
+                  className="w-[130%] max-w-none h-auto object-contain drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)] filter brightness-110"
                   style={{ transform: "rotate(-15deg)" }}
                 />
 
@@ -273,9 +273,11 @@ export function Home() {
             </h2>
             <Link
               to="/products"
-              className="text-brand hover:underline flex items-center gap-1"
+              className="group relative flex items-center gap-2 text-sm font-medium text-zinc-400 transition-colors duration-300 hover:text-white"
             >
-              Ver todos <ArrowRight className="w-4 h-4" />
+              Ver todos
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+              <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-brand shadow-[0_0_10px_#43BBA8] transition-all duration-300 group-hover:w-full" />
             </Link>
           </div>
 
