@@ -104,16 +104,16 @@ export function ProductDetails() {
       <main className="max-w-7xl mx-auto px-6 lg:px-32 pt-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
           <div className="relative animate-slide-up">
-            <div className="aspect-square bg-neumo-bg rounded-3xl shadow-neumo-pressed p-8 flex items-center justify-center relative overflow-hidden group">
+            <div className="aspect-square bg-neumo-bg rounded-3xl shadow-neumo-pressed flex items-center justify-center relative overflow-hidden group">
               <div className="absolute inset-0 bg-brand/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-[100px] rounded-full pointer-events-none"></div>
 
               <img
                 src={product.imageUrl}
                 alt={product.name}
-                className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-10 transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-2"
+                className="w-full h-full object-cover object-center z-10 transition-transform duration-500 group-hover:scale-105"
               />
 
-              <button className="absolute top-6 right-6 w-10 h-10 rounded-full bg-neumo-bg shadow-neumo-flat flex items-center justify-center text-zinc-400 hover:text-red-500 transition-colors z-20">
+              <button className="absolute top-6 right-6 w-10 h-10 rounded-full bg-neumo-bg/50 backdrop-blur-md shadow-neumo-flat flex items-center justify-center text-zinc-400 hover:text-red-500 transition-colors z-20">
                 <Heart className="w-5 h-5" />
               </button>
             </div>
