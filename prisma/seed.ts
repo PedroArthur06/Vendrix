@@ -40,8 +40,7 @@ async function main() {
         sku: "NK-AM-001",
         stock: 50,
         categoryId: sneakersCategory.id,
-        imageUrl:
-          "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop",
+        imageUrl: "/img/tenis1.png",
       },
       {
         name: "Adidas Ultraboost X",
@@ -50,8 +49,7 @@ async function main() {
         sku: "AD-UB-002",
         stock: 30,
         categoryId: sneakersCategory.id,
-        imageUrl:
-          "https://images.unsplash.com/photo-1587563871167-1ee7974e3c64?q=80&w=2095&auto=format&fit=crop",
+        imageUrl: "/img/tenis2.png",
       },
       {
         name: "Yeezy Quantum Green",
@@ -60,18 +58,35 @@ async function main() {
         sku: "YZ-QT-003",
         stock: 10,
         categoryId: sneakersCategory.id,
-        imageUrl:
-          "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=1974&auto=format&fit=crop",
+        imageUrl: "/img/tenis3.png",
       },
       {
-        name: "Jaqueta Tech Fleece",
-        description: "Tecnologia térmica para dias frios.",
-        price: 499.9,
-        sku: "NK-TF-004",
-        stock: 100,
+        name: "Jaqueta Tech Shell",
+        description: "Proteção tática contra intempéries com design modular.",
+        price: 899.9,
+        sku: "JK-TC-001",
+        stock: 15,
         categoryId: clothingCategory.id,
-        imageUrl:
-          "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=1936&auto=format&fit=crop",
+        imageUrl: "/img/jaqueta.png",
+      },
+      {
+        name: "Mochila Carbon Core",
+        description:
+          "Estrutura rígida de fibra de carbono e iluminação integrada.",
+        price: 650.0,
+        sku: "AC-BP-002",
+        stock: 20,
+        categoryId: clothingCategory.id,
+        imageUrl: "/img/mochila.png",
+      },
+      {
+        name: "Visor HUD Glass",
+        description: "Óculos de realidade aumentada com interface neural.",
+        price: 3499.0,
+        sku: "AC-gl-001",
+        stock: 5,
+        categoryId: clothingCategory.id,
+        imageUrl: "/img/oculos.png",
       },
     ],
   });
