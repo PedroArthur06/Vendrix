@@ -1,4 +1,4 @@
-import { ShoppingBag, Trash2, ArrowRight } from "lucide-react"; // Removi Plus e Minus
+import { ShoppingBag, Trash2, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
 import { formatPrice } from "@/utils/formatPrice";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,9 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  // SheetFooter removido pois não estava sendo usado
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator"; // Agora vai funcionar
+import { Separator } from "@/components/ui/separator";
 
 export function CartSheet() {
   const { items, removeFromCart, clearCart, count } = useCartStore();
@@ -23,7 +22,6 @@ export function CartSheet() {
 
   return (
     <Sheet>
-      {/* O segredo está aqui: O Trigger ENVOLVE o botão */}
       <SheetTrigger asChild>
         <Button
           variant="ghost"
