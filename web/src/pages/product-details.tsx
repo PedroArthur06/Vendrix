@@ -11,7 +11,7 @@ import {
   Share2,
   Heart,
 } from "lucide-react";
-import type { Product } from "@/hooks/useProducts";
+import type { Product } from "@/types/product";
 import { useCartStore } from "@/stores/cart-store";
 import { toast } from "sonner";
 
@@ -126,7 +126,7 @@ export function ProductDetails() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-brand text-sm font-bold tracking-[0.2em] uppercase">
-                  {product.categoryName || "Coleção Exclusiva"}
+                  {product.category || "Coleção Exclusiva"}
                 </h2>
                 <button className="text-zinc-500 hover:text-white transition-colors">
                   <Share2 className="w-5 h-5" />
