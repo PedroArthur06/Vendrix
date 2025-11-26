@@ -48,24 +48,17 @@ export function Checkout() {
     },
   });
 
-  // 1. Função de Máscara (Visual)
   const formatCep = (value: string) => {
-    return value
-      .replace(/\D/g, "") // Remove letras
-      .replace(/^(\d{5})(\d)/, "$1-$2") // Adiciona traço após o 5º dígito
-      .slice(0, 9); // Limita tamanho
+    return value.replace(/\D/g, "").replace(/^(\d{5})(\d)/, "$1-$2");
   };
 
-  // 2. Função que busca no ViaCEP
   const handleCepChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
       const rawValue = e.target.value;
       const formattedValue = formatCep(rawValue);
 
-      // Atualiza o valor no formulário visualmente
       field.onChange(formattedValue);
 
-      // Se tiver o tamanho correto (9 chars com traço), busca na API
       if (formattedValue.length === 9) {
         setIsLoadingCep(true);
         try {
@@ -81,13 +74,11 @@ export function Checkout() {
             return;
           }
 
-          // Preenche os campos automaticamente
           form.setValue("address.street", data.logradouro);
           form.setValue("address.neighborhood", data.bairro);
           form.setValue("address.city", data.localidade);
           form.setValue("address.state", data.uf);
 
-          // Foca no campo de número (UX Pro)
           form.setFocus("address.number");
         } catch (error) {
           toast.error("Erro ao buscar CEP. Preencha manualmente.");
@@ -106,7 +97,6 @@ export function Checkout() {
 
   async function onSubmit(data: CheckoutFormValues) {
     setIsSubmitting(true);
-    // Simula envio
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsSubmitting(false);
     clearCart();
@@ -146,9 +136,7 @@ export function Checkout() {
             onSubmit={form.handleSubmit(onSubmit)}
             className="grid grid-cols-1 lg:grid-cols-12 gap-8"
           >
-            {/* Coluna da Esquerda - Formulários */}
             <div className="lg:col-span-7 space-y-6">
-              {/* Endereço */}
               <Card className="bg-zinc-900/50 border-zinc-800">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-white">
@@ -290,11 +278,8 @@ export function Checkout() {
                   </div>
                 </CardContent>
               </Card>
-
-              {/* Pagamento */}
             </div>
 
-            {/* Coluna da Direita - Resumo */}
             <div className="lg:col-span-5">
               <Card className="bg-zinc-900/50 border-zinc-800 sticky top-24">
                 <CardHeader>
