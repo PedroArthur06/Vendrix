@@ -3,7 +3,7 @@ import { ProductService } from "../../services/product.service";
 import {
   CreateProductRequest,
   UpdateProductRequest,
-} from "../../dtos/request.types";
+} from "../../../../shared/types/product.types";
 import { AuthRequest } from "../../../../shared/infra/http/middlewares/auth.middleware";
 
 export class ProductController {

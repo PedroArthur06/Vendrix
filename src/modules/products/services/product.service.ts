@@ -5,7 +5,7 @@ import {
   CreateProductRequest,
   ProductResponse,
   UpdateProductRequest,
-} from "../dtos/request.types";
+} from "../../../shared/types/product.types";
 
 export class ProductService {
   private mapToProductResponse(product: any): ProductResponse {
