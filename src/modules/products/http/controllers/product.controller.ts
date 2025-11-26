@@ -22,7 +22,12 @@ export class ProductController {
   }
 
   async findAll(req: Request, res: Response): Promise<void> {
-    const products = await this.productService.findAllProducts();
+    const { search, brand, category } = req.query;
+    const products = await this.productService.findAllProducts(
+      (search as string) || undefined,
+      (brand as string) || undefined,
+      (category as string) || undefined
+    );
     res.status(200).json(products);
   }
 

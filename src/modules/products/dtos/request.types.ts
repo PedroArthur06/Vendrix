@@ -4,7 +4,8 @@ export interface CreateProductRequest {
   price: number;
   sku: string;
   stock?: number;
-  categoryId: string;
+  brand: "NIKE" | "ADIDAS" | "YEEZY" | "VENDRIX";
+  category: "FOOTWEAR" | "APPAREL" | "ACCESSORIES";
   imageUrl: string;
 }
 
@@ -15,8 +16,8 @@ export interface ProductResponse {
   price: number;
   sku: string;
   stock: number;
-  categoryId: string;
-  categoryName: string;
+  brand: string;
+  category: string;
   createdAt: Date;
   updatedAt: Date;
   imageUrl: string;
@@ -27,5 +28,6 @@ export interface UpdateProductRequest {
   description?: string;
   price?: number;
   stock?: number;
-  categoryId?: string;
+  brand?: "NIKE" | "ADIDAS" | "YEEZY" | "VENDRIX";
+  category?: "FOOTWEAR" | "APPAREL" | "ACCESSORIES";
 }

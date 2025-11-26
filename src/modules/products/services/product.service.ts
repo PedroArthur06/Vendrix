@@ -1,5 +1,6 @@
 import { prisma } from "../../../shared/infra/database";
 import { AppError } from "../../../shared/errors/AppError";
+import { Brand, CategoryType, Prisma } from "@prisma/client";
 import {
   CreateProductRequest,
   ProductResponse,
@@ -15,8 +16,8 @@ export class ProductService {
       price: Number(product.price),
       sku: product.sku,
       stock: product.stock,
-      categoryId: product.categoryId,
-      categoryName: product.category?.name,
+      brand: product.brand,
+      category: product.category,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
       imageUrl: product.imageUrl,
@@ -35,14 +36,6 @@ export class ProductService {
       throw new AppError("Product with this SKU already exists", 409);
     }
 
-    const category = await prisma.category.findUnique({
-      where: { id: data.categoryId },
-    });
-
-    if (!category) {
-      throw new AppError("Category not found", 404);
-    }
-
     const newProduct = await prisma.product.create({
       data: {
         name: data.name,
@@ -50,24 +43,54 @@ export class ProductService {
         price: data.price,
         sku: data.sku,
         stock: data.stock || 0,
-        categoryId: data.categoryId,
-        // supplierId: supplierId,
+        brand: data.brand as Brand,
+        category: data.category as CategoryType,
         imageUrl: data.imageUrl,
-      },
-      include: {
-        category: { select: { name: true } },
       },
     });
 
     return this.mapToProductResponse(newProduct);
   }
 
-  async findAllProducts(): Promise<ProductResponse[]> {
+  async findAllProducts(
+    search?: string,
+    brand?: string,
+    category?: string
+  ): Promise<ProductResponse[]> {
+    const whereCondition: Prisma.ProductWhereInput = {};
+
+    if (search) {
+      whereCondition.name = {
+        contains: search,
+        mode: "insensitive",
+      };
+    }
+
+    if (brand) {
+      const upperBrand = brand.toUpperCase();
+      if (upperBrand in Brand) {
+        whereCondition.brand = upperBrand as Brand;
+      } else {
+        return [];
+      }
+    }
+
+    if (category) {
+      const upperCategory = category.toUpperCase();
+      if (upperCategory in CategoryType) {
+        whereCondition.category = upperCategory as CategoryType;
+      } else {
+        return [];
+      }
+    }
+
     const products = await prisma.product.findMany({
-      include: {
-        category: { select: { name: true } },
+      where: whereCondition,
+      orderBy: {
+        createdAt: "desc",
       },
     });
+
     return products.map((p) => this.mapToProductResponse(p));
   }
 
@@ -93,9 +116,9 @@ export class ProductService {
         description: data.description,
         price: data.price,
         stock: data.stock,
-        categoryId: data.categoryId,
+        brand: data.brand as Brand,
+        category: data.category as CategoryType,
       },
-      include: { category: { select: { name: true } } },
     });
 
     return this.mapToProductResponse(updatedProduct);
@@ -118,9 +141,6 @@ export class ProductService {
   async findProductById(id: string): Promise<ProductResponse> {
     const product = await prisma.product.findUnique({
       where: { id },
-      include: {
-        category: { select: { name: true } },
-      },
     });
 
     if (!product) {
