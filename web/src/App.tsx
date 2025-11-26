@@ -8,6 +8,7 @@ import { AppLayout } from "./pages/_layouts/app-layout";
 import { ProductDetails } from "./pages/product-details";
 import { Checkout } from "./pages/checkout";
 import { OrderConfirmed } from "./pages/order-confirmed";
+import { Catalog } from "./pages/catalog";
 
 const queryClient = new QueryClient();
 export function App() {
@@ -19,6 +20,7 @@ export function App() {
 
           <Route path="/login" element={<SignIn />} />
           <Route path="/register" element={<SignUp />} />
+          <Route path="/catalog" element={<Catalog />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-confirmed" element={<OrderConfirmed />} />
           <Route path="/product/:id" element={<ProductDetails />} />
