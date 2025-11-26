@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, MapPin, ShoppingBag } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -26,9 +25,11 @@ import { Separator } from "@/components/ui/separator";
 import { useCartStore } from "@/stores/cart-store";
 import { checkoutSchema, type CheckoutFormValues } from "@/schemas/checkout";
 import { formatPrice } from "@/utils/formatPrice";
+import { toast } from "sonner";
 
 export function Checkout() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingCep, setIsLoadingCep] = useState(false);
   const navigate = useNavigate();
   const { items, clearCart } = useCartStore();
 
@@ -37,21 +38,66 @@ export function Checkout() {
     mode: "onChange",
     defaultValues: {
       address: {
+        zipCode: "",
         street: "",
         number: "",
-        zipCode: "",
+        neighborhood: "",
         city: "",
+        state: "",
       },
     },
   });
 
-  const handleZipCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, "");
-    if (value.length > 5) {
-      value = value.replace(/^(\d{5})(\d)/, "$1-$2");
-    }
-    form.setValue("address.zipCode", value, { shouldValidate: true });
+  // 1. Função de Máscara (Visual)
+  const formatCep = (value: string) => {
+    return value
+      .replace(/\D/g, "") // Remove letras
+      .replace(/^(\d{5})(\d)/, "$1-$2") // Adiciona traço após o 5º dígito
+      .slice(0, 9); // Limita tamanho
   };
+
+  // 2. Função que busca no ViaCEP
+  const handleCepChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
+      const rawValue = e.target.value;
+      const formattedValue = formatCep(rawValue);
+
+      // Atualiza o valor no formulário visualmente
+      field.onChange(formattedValue);
+
+      // Se tiver o tamanho correto (9 chars com traço), busca na API
+      if (formattedValue.length === 9) {
+        setIsLoadingCep(true);
+        try {
+          const cleanCep = formattedValue.replace("-", "");
+          const response = await fetch(
+            `https://viacep.com.br/ws/${cleanCep}/json/`
+          );
+          const data = await response.json();
+
+          if (data.erro) {
+            form.setError("address.zipCode", { message: "CEP não encontrado" });
+            toast.error("CEP não encontrado!");
+            return;
+          }
+
+          // Preenche os campos automaticamente
+          form.setValue("address.street", data.logradouro);
+          form.setValue("address.neighborhood", data.bairro);
+          form.setValue("address.city", data.localidade);
+          form.setValue("address.state", data.uf);
+
+          // Foca no campo de número (UX Pro)
+          form.setFocus("address.number");
+        } catch (error) {
+          toast.error("Erro ao buscar CEP. Preencha manualmente.");
+        } finally {
+          setIsLoadingCep(false);
+        }
+      }
+    },
+    [form]
+  );
 
   const total = items.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -60,12 +106,8 @@ export function Checkout() {
 
   async function onSubmit(data: CheckoutFormValues) {
     setIsSubmitting(true);
-
-    // Simulação da chamada para API do Stripe
-    console.log("Enviando dados para o Stripe:", data);
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
+    // Simula envio
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsSubmitting(false);
     clearCart();
     navigate("/order-confirmed");
@@ -126,16 +168,22 @@ export function Checkout() {
                         <FormItem>
                           <FormLabel className="text-zinc-400">CEP</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="00000-000"
-                              className="bg-black/20 border-zinc-800 text-white focus:border-brand"
-                              {...field}
-                              onChange={(e) => {
-                                handleZipCodeChange(e);
-                                field.onChange(e);
-                              }}
-                              maxLength={9}
-                            />
+                            <div className="relative">
+                              <Input
+                                placeholder="00000-000"
+                                className="bg-black/20 border-zinc-800 text-white focus:border-brand pr-10"
+                                {...field}
+                                onChange={(e) => {
+                                  handleCepChange(e, field);
+                                }}
+                                maxLength={9}
+                              />
+                              {isLoadingCep && (
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                  <Loader2 className="h-4 w-4 animate-spin text-brand" />
+                                </div>
+                              )}
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -191,6 +239,47 @@ export function Checkout() {
                             <Input
                               placeholder="123"
                               className="bg-black/20 border-zinc-800 text-white focus:border-brand"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="address.neighborhood"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-zinc-400">
+                            Bairro
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Centro"
+                              className="bg-black/20 border-zinc-800 text-white focus:border-brand"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="address.state"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-zinc-400">
+                            Estado (UF)
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="SP"
+                              maxLength={2}
+                              className="bg-black/20 border-zinc-800 text-white focus:border-brand uppercase"
                               {...field}
                             />
                           </FormControl>
