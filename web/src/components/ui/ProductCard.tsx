@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/utils/formatPrice";
-import { Link } from "react-router-dom";
+import { useCartStore } from "@/stores/cart-store";
+import { toast } from "sonner";
+import { useNavigate, Link } from "react-router-dom";
+import { ShoppingCart, Zap } from "lucide-react";
 
 interface ProductCardProps {
   id: string;
@@ -11,6 +14,31 @@ interface ProductCardProps {
 
 export function ProductCard({ id, name, price, image }: ProductCardProps) {
   const formattedPrice = formatPrice(price);
+
+  const { addToCart } = useCartStore();
+  const navigate = useNavigate();
+
+  const product = { id, name, price: Number(price), image, quantity: 1 };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart(product);
+    toast.success("Adicionado ao carrinho!");
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    addToCart(product);
+
+    const isAuthenticated = !!localStorage.getItem("vendrix:token");
+
+    if (!isAuthenticated) {
+      navigate("/login", { state: { from: "/checkout" } });
+    } else {
+      navigate("/checkout");
+    }
+  };
 
   return (
     <div className="group relative flex flex-col rounded-2xl bg-neumo-bg p-6 shadow-neumo-flat transition-all hover:-translate-y-2 hover:shadow-lg hover:shadow-brand/10">
@@ -31,12 +59,24 @@ export function ProductCard({ id, name, price, image }: ProductCardProps) {
         <p className="text-brand font-medium text-lg">{formattedPrice}</p>
       </div>
 
-      <Button
-        asChild
-        className="mt-6 w-full h-12 bg-neumo-bg text-zinc-400 border border-white/5 shadow-neumo-flat hover:text-white hover:bg-brand hover:border-brand active:scale-95 transition-all font-semibold tracking-wide"
-      >
-        <Link to={`/product/${id}`}>Comprar Agora</Link>
-      </Button>
+      {/* CORREÇÃO AQUI: Div flex em vez de Button wrapper */}
+      <div className="mt-6 flex gap-3 w-full">
+        <Button
+          variant="secondary"
+          className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white border border-white/5"
+          onClick={handleAddToCart}
+        >
+          <ShoppingCart className="w-4 h-4" />
+        </Button>
+
+        <Button
+          className="flex-[2] bg-brand hover:bg-brand/90 text-neumo-bg font-bold"
+          onClick={handleBuyNow}
+        >
+          <Zap className="w-4 h-4 mr-2" />
+          Comprar
+        </Button>
+      </div>
     </div>
   );
 }

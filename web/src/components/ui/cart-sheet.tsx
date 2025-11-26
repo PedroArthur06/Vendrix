@@ -1,4 +1,5 @@
 import { ShoppingBag, Trash2, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cart-store";
 import { formatPrice } from "@/utils/formatPrice";
 import { Button } from "@/components/ui/button";
@@ -14,11 +15,23 @@ import { Separator } from "@/components/ui/separator";
 
 export function CartSheet() {
   const { items, removeFromCart, clearCart, count } = useCartStore();
+  const navigate = useNavigate();
 
   const subtotal = items.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+
+  const handleCheckout = () => {
+    const isAuthenticated = !!localStorage.getItem("vendrix:token");
+
+    if (!isAuthenticated) {
+      navigate("/login", { state: { from: "/checkout" } });
+      return;
+    }
+
+    navigate("/checkout");
+  };
 
   return (
     <Sheet>
@@ -103,7 +116,11 @@ export function CartSheet() {
             </div>
 
             <div className="grid gap-3">
-              <Button className="w-full h-12 bg-brand text-neumo-bg font-bold hover:bg-brand/90">
+              <Button
+                className="w-full h-12 bg-brand text-neumo-bg font-bold hover:bg-brand/90"
+                onClick={handleCheckout}
+                disabled={items.length === 0}
+              >
                 Finalizar Compra <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
               <Button
