@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { toast } from "sonner";
 
 const signInSchema = z.object({
   email: z.string().email("E-mail inválido"),
@@ -25,6 +26,8 @@ type SignInForm = z.infer<typeof signInSchema>;
 
 export function SignIn() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/admin/dashboard";
 
   const form = useForm<SignInForm>({
     resolver: zodResolver(signInSchema),
@@ -41,10 +44,10 @@ export function SignIn() {
     },
     onSuccess: (data) => {
       localStorage.setItem("vendrix:token", data.token);
-      navigate("/dashboard");
+      toast.success("Login realizado!");
+      navigate(from, { replace: true });
     },
     onError: (error: AxiosError) => {
-      // Tipagem segura do erro
       const data = error.response?.data as { message: string };
       alert(data?.message || "Erro ao fazer login");
     },
@@ -55,11 +58,7 @@ export function SignIn() {
   }
 
   return (
-    // Fundo Geral (#212121)
     <div className="min-h-screen flex items-center justify-center bg-[#212121] font-sans text-white p-4">
-      {/* CARD PRINCIPAL (Efeito "Buraco" / Inset Shadow) 
-          Traduzido de: box-shadow: inset 2px 2px 10px rgba(0,0,0,1), inset -1px -1px 5px rgba(255, 255, 255, 0.6);
-      */}
       <div className="w-full max-w-[350px] flex flex-col items-center gap-6 p-10 rounded-[15px] bg-[#212121] shadow-[inset_2px_2px_10px_rgba(0,0,0,1),inset_-1px_-1px_5px_rgba(255,255,255,0.6)]">
         <div className="text-2xl font-bold pb-2 tracking-wide">Login</div>
 
@@ -68,7 +67,6 @@ export function SignIn() {
             onSubmit={form.handleSubmit(handleSignIn)}
             className="flex flex-col gap-5 w-full"
           >
-            {/* INPUT EMAIL (Efeito "Saltado" -> "Pressionado" no Focus) */}
             <FormField
               control={form.control}
               name="email"
@@ -78,7 +76,6 @@ export function SignIn() {
                     <Input
                       placeholder="E-mail"
                       {...field}
-                      // Estilização pesada para sobrescrever o padrão do Shadcn
                       className="w-full h-[45px] bg-[#212121] text-white border-none rounded-[6px] px-4 outline-none transition-all duration-300
                       placeholder:text-[#999]
                       
@@ -96,7 +93,6 @@ export function SignIn() {
               )}
             />
 
-            {/* INPUT SENHA */}
             <FormField
               control={form.control}
               name="password"
@@ -122,7 +118,6 @@ export function SignIn() {
               )}
             />
 
-            {/* BOTÃO LOGIN */}
             <Button
               type="submit"
               disabled={isPending}
@@ -142,7 +137,6 @@ export function SignIn() {
               {isPending ? "Entrando..." : "ENTRAR"}
             </Button>
 
-            {/* Link de Cadastro */}
             <div className="text-[13px] text-white text-center mt-2">
               Não tem uma conta?{" "}
               <Link
