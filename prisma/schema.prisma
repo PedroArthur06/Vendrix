@@ -14,6 +14,19 @@ enum Role {
   supplier
 }
 
+enum Brand {
+  NIKE
+  ADIDAS
+  YEEZY
+  VENDRIX
+}
+
+enum CategoryType {
+  FOOTWEAR
+  APPAREL
+  ACCESSORIES
+}
+
 // --- Models ---
 
 model User {
@@ -55,25 +68,12 @@ model Product {
   sku         String   @unique
   stock       Int      @default(0)
   imageUrl    String
-  categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
-
-  // Futuro: relacionamento com User (Supplier)
-  // supplierId String
-  // supplier   User @relation(fields: [supplierId], references: [id])
+  
+  brand       Brand        @default(VENDRIX)
+  category    CategoryType @default(FOOTWEAR)
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@map("products")
-}
-
-model Category {
-  id        String    @id @default(uuid())
-  name      String
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  @@map("categories")
 }

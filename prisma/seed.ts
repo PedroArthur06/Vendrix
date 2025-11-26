@@ -1,11 +1,11 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Brand, CategoryType } from "@prisma/client";
 import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log("Iniciando limpeza do banco...");
   await prisma.product.deleteMany();
-  await prisma.category.deleteMany();
   await prisma.user.deleteMany();
 
   const email = "admin@vendrix.com";
@@ -23,13 +23,7 @@ async function main() {
 
   console.log("Admin criado:", admin.email);
 
-  const sneakersCategory = await prisma.category.create({
-    data: { name: "Sneakers" },
-  });
-
-  const clothingCategory = await prisma.category.create({
-    data: { name: "Vestuário" },
-  });
+  console.log("Iniciando população de produtos...");
 
   await prisma.product.createMany({
     data: [
@@ -39,8 +33,9 @@ async function main() {
         price: 1299.9,
         sku: "NK-AM-001",
         stock: 50,
-        categoryId: sneakersCategory.id,
-        imageUrl: "/img/tenis1.png",
+        brand: Brand.NIKE,
+        category: CategoryType.FOOTWEAR,
+        imageUrl: "/img/tenis-nike.png",
       },
       {
         name: "Adidas Ultraboost X",
@@ -48,8 +43,9 @@ async function main() {
         price: 999.9,
         sku: "AD-UB-002",
         stock: 30,
-        categoryId: sneakersCategory.id,
-        imageUrl: "/img/tenis2.png",
+        brand: Brand.ADIDAS,
+        category: CategoryType.FOOTWEAR,
+        imageUrl: "/img/tenis-adidas.png",
       },
       {
         name: "Yeezy Quantum Green",
@@ -57,18 +53,32 @@ async function main() {
         price: 2499.0,
         sku: "YZ-QT-003",
         stock: 10,
-        categoryId: sneakersCategory.id,
-        imageUrl: "/img/tenis3.png",
+        brand: Brand.YEEZY,
+        category: CategoryType.FOOTWEAR,
+        imageUrl: "/img/tenis-yeezy.png",
       },
+      {
+        name: "Vendrix Runner Prototype",
+        description: "Nosso modelo exclusivo de performance.",
+        price: 599.9,
+        sku: "VX-RN-001",
+        stock: 100,
+        brand: Brand.VENDRIX,
+        category: CategoryType.FOOTWEAR,
+        imageUrl: "/img/tenis-futuro.png",
+      },
+
       {
         name: "Jaqueta Tech Shell",
         description: "Proteção tática contra intempéries com design modular.",
         price: 899.9,
         sku: "JK-TC-001",
         stock: 15,
-        categoryId: clothingCategory.id,
+        brand: Brand.VENDRIX,
+        category: CategoryType.APPAREL,
         imageUrl: "/img/jaqueta.png",
       },
+
       {
         name: "Mochila Carbon Core",
         description:
@@ -76,16 +86,18 @@ async function main() {
         price: 650.0,
         sku: "AC-BP-002",
         stock: 20,
-        categoryId: clothingCategory.id,
+        brand: Brand.VENDRIX,
+        category: CategoryType.ACCESSORIES,
         imageUrl: "/img/mochila.png",
       },
       {
         name: "Visor HUD Glass",
         description: "Óculos de realidade aumentada com interface neural.",
         price: 3499.0,
-        sku: "AC-gl-001",
+        sku: "AC-GL-001",
         stock: 5,
-        categoryId: clothingCategory.id,
+        brand: Brand.VENDRIX,
+        category: CategoryType.ACCESSORIES,
         imageUrl: "/img/oculos.png",
       },
     ],
