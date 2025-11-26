@@ -28,7 +28,7 @@ const SNEAKER_BRANDS = [
   { name: "Nike", href: "/catalog?brand=NIKE" },
   { name: "Adidas", href: "/catalog?brand=ADIDAS" },
   { name: "Yeezy", href: "/catalog?brand=YEEZY" },
-  { name: "Vendrix", href: "/catalog?brand=VENDRIX" },
+  { name: "Vendrix", href: "/catalog?brand=VENDRIX&category=FOOTWEAR" },
 ];
 
 const MenuItem = ({
@@ -362,7 +362,7 @@ export function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {products?.slice(0, 3).map((product: Product) => (
+              {products?.slice(0, 6).map((product: Product) => (
                 <ProductCard
                   key={product.id}
                   id={product.id}
