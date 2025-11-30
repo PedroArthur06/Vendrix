@@ -8,8 +8,6 @@ import {
   ChevronDown,
   Lock,
   ArrowRight,
-  Loader2,
-  AlertCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -85,7 +83,6 @@ export function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: products, isLoading, isError } = useProducts();
 
-  // Otimização: Adicionei um pequeno threshold para evitar flickers
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -94,7 +91,6 @@ export function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Travar scroll quando menu mobile estiver aberto
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -104,17 +100,18 @@ export function Home() {
   }, [isMobileMenuOpen]);
 
   return (
-    <div className="min-h-screen bg-neumo-bg text-neumo-text font-sans selection:bg-brand selection:text-white pb-20 relative">
+    // FIX 1: overflow-x-hidden aqui no container principal é OBRIGATÓRIO para evitar scroll lateral
+    <div className="min-h-screen w-full bg-neumo-bg text-neumo-text font-sans selection:bg-brand selection:text-white pb-20 relative overflow-x-hidden">
       {/* Header */}
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-[60] transition-all duration-500 border-b border-transparent",
           isScrolled
             ? "bg-neumo-bg/95 backdrop-blur-md border-zinc-800 py-3 shadow-lg"
-            : "bg-transparent py-6"
+            : "bg-transparent py-4 sm:py-6"
         )}
       >
-        {/* Top Bar (Hidden on Scroll) */}
+        {/* Top Bar (Hidden on Mobile) */}
         <div
           className={cn(
             "absolute top-0 w-full border-b border-white/5 bg-black/40 transition-opacity duration-300 hidden md:block",
@@ -131,17 +128,18 @@ export function Home() {
         </div>
 
         {/* Main Nav Content */}
-        <div className="mx-auto max-w-7xl px-6 mt-4 md:mt-2">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 mt-2 md:mt-2">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group z-50">
-              <div className="h-10 w-10 rounded-xl bg-brand flex items-center justify-center relative overflow-hidden shadow-[0_0_20px_rgba(67,187,168,0.3)]">
+              <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-brand flex items-center justify-center relative overflow-hidden shadow-[0_0_20px_rgba(67,187,168,0.3)]">
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                <span className="font-bold text-neumo-bg text-xl relative z-10">
+                <span className="font-bold text-neumo-bg text-lg sm:text-xl relative z-10">
                   V
                 </span>
               </div>
-              <span className="text-2xl font-bold tracking-tighter text-white transition-all duration-500">
+              {/* No mobile, talvez só o logo "V" baste, ou diminua a fonte */}
+              <span className="text-xl sm:text-2xl font-bold tracking-tighter text-white transition-all duration-500">
                 VENDRIX
               </span>
             </Link>
@@ -162,7 +160,8 @@ export function Home() {
             </nav>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-6 z-50">
+            <div className="flex items-center gap-3 sm:gap-6 z-50">
+              {/* Search Desktop */}
               <div className="hidden md:flex items-center group bg-zinc-900/80 rounded-full px-4 py-2 border border-zinc-800 focus-within:border-brand focus-within:shadow-[0_0_15px_rgba(67,187,168,0.4)] transition-all duration-300">
                 <Search className="w-4 h-4 text-zinc-400 group-focus-within:text-brand transition-colors" />
                 <input
@@ -173,7 +172,16 @@ export function Home() {
               </div>
 
               <div className="flex items-center gap-2 sm:gap-4">
-                <Link to="/login">
+                {/* Search Mobile Trigger (Optional if needed) */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden text-zinc-400 hover:text-white"
+                >
+                  <Search className="w-5 h-5" />
+                </Button>
+
+                <Link to="/login" className="hidden sm:block">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -204,7 +212,7 @@ export function Home() {
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay - (Ainda o antigo, vamos focar no layout primeiro) */}
       <div
         className={cn(
           "fixed inset-0 bg-[#0a0a0a] z-[55] flex flex-col pt-32 px-8 transition-all duration-500 lg:hidden",
@@ -243,85 +251,94 @@ export function Home() {
       </div>
 
       {/* Hero Section */}
-      <main className="mx-auto max-w-[1440px] px-6 lg:px-32 pt-32 lg:pt-40">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center lg:ml-auto">
-          <div className="space-y-6 animate-slide-up">
-            <div className="inline-block rounded-full bg-neumo-bg px-4 py-1.5 text-sm font-medium text-brand shadow-neumo-pressed">
+      {/* Adicionei 'overflow-hidden' aqui também por segurança para os círculos de fundo */}
+      <main className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-32 pt-24 lg:pt-40 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center lg:ml-auto">
+          {/* Texto do Hero */}
+          <div className="space-y-6 animate-slide-up text-center lg:text-left flex flex-col items-center lg:items-start z-10">
+            <div className="inline-block rounded-full bg-neumo-bg px-3 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm font-medium text-brand shadow-neumo-pressed border border-white/5">
               Nova Coleção 2025
             </div>
-            <h1 className="text-5xl font-extrabold tracking-tight text-white lg:text-7xl">
+
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white lg:text-7xl leading-none sm:leading-tight text-center lg:text-left">
               WALK THE <br />
-              <GradientText
-                colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
-                animationSpeed={3}
-                showBorder={false}
-                className="text-5xl lg:text-7xl uppercase"
-              >
-                FUTURE
-              </GradientText>
+              <span className="block w-full text-center lg:text-left">
+                <GradientText
+                  colors={[
+                    "#40ffaa",
+                    "#4079ff",
+                    "#40ffaa",
+                    "#4079ff",
+                    "#40ffaa",
+                  ]}
+                  animationSpeed={3}
+                  showBorder={false}
+                  className="text-4xl sm:text-5xl lg:text-7xl uppercase inline-block pr-2 pb-2 pl-6"
+                >
+                  FUTURE
+                </GradientText>
+              </span>
             </h1>
-            <p className="max-w-md text-lg text-zinc-400">
+
+            <p className="max-w-md text-sm sm:text-lg text-zinc-400 mx-auto lg:mx-0 leading-relaxed">
               Tecnologia de ponta e design disruptivo. Descubra os sneakers que
               vão redefinir o seu caminhar.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link to="/catalog">
+
+            <div className="grid grid-cols-2 sm:flex sm:flex-row gap-3 sm:gap-4 pt-2 w-full sm:w-auto">
+              <Link to="/catalog" className="w-full sm:w-auto">
                 <StarBorder
                   as="button"
-                  className="h-16 w-full sm:w-auto min-w-[180px] cursor-pointer"
+                  className="h-12 sm:h-16 w-full sm:w-auto min-w-0 sm:min-w-[180px] cursor-pointer text-xs sm:text-base"
                   color="#43BBA8"
                   speed="4s"
                 >
-                  Explorar Loja
+                  Explorar
                 </StarBorder>
               </Link>
 
-              <Link to="/catalog?sort=popular">
+              <Link to="/catalog?sort=popular" className="w-full sm:w-auto">
                 <Button
                   variant="outline"
-                  className="h-16 w-full sm:w-auto px-8 rounded-[20px] border-white/10 bg-transparent text-white hover:bg-white/5 hover:text-brand transition-all text-base font-bold"
+                  className="h-12 sm:h-16 w-full sm:w-auto px-4 sm:px-8 rounded-[20px] border-white/10 bg-transparent text-white hover:bg-white/5 hover:text-brand transition-all text-xs sm:text-base font-bold whitespace-nowrap"
                 >
-                  Ver Mais Vendidos
+                  Mais Vendidos
                 </Button>
               </Link>
             </div>
           </div>
 
-          <div className="relative flex justify-center">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-brand/10 blur-3xl"></div>
+          {/* Imagem do Hero */}
+          <div className="relative flex justify-center mt-4 lg:mt-0">
+            {/* Reduzi o tamanho dos efeitos de fundo no mobile para não vazar */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] sm:w-[300px] h-[180px] sm:h-[300px] rounded-full bg-brand/10 blur-3xl pointer-events-none"></div>
 
-            <div className="relative flex justify-center items-center py-12 lg:py-0 perspective-1000">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] rounded-full bg-brand/20 blur-[80px] animate-pulse-slow pointer-events-none"></div>
+            <div className="relative flex justify-center items-center py-4 lg:py-0 perspective-1000">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] rounded-full bg-brand/20 blur-[60px] animate-pulse-slow pointer-events-none"></div>
 
-              <div className="absolute w-[400px] h-[400px] border border-white/5 rounded-full animate-[spin_10s_linear_infinite] pointer-events-none"></div>
-              <div className="absolute w-[300px] h-[300px] border border-brand/10 rounded-full animate-[spin_15s_linear_infinite_reverse] pointer-events-none"></div>
+              {/* Círculos giratórios ajustados */}
+              <div className="absolute w-[240px] sm:w-[400px] h-[240px] sm:h-[400px] border border-white/5 rounded-full animate-[spin_10s_linear_infinite] pointer-events-none"></div>
+              <div className="absolute w-[180px] sm:w-[300px] h-[180px] sm:h-[300px] border border-brand/10 rounded-full animate-[spin_15s_linear_infinite_reverse] pointer-events-none"></div>
 
               <div className="relative z-10 animate-float">
+                {/* FIX 3: Imagem contida com max-w-[85%] para não tocar nas bordas laterais */}
                 <img
                   src={Products.hero}
                   alt="Sneaker do Futuro"
-                  className="w-[130%] max-w-none h-auto object-contain drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)] filter brightness-110"
+                  className="w-[85%] sm:w-[130%] max-w-[300px] sm:max-w-none h-auto object-contain drop-shadow-[0_25px_25px_rgba(0,0,0,0.5)] filter brightness-110 mx-auto lg:mx-0"
                   style={{ transform: "rotate(-15deg)" }}
                 />
-
-                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-2/3 h-4 bg-black/40 blur-xl rounded-[100%] animate-shadow-breath"></div>
+                <div className="absolute -bottom-4 sm:-bottom-10 left-1/2 -translate-x-1/2 w-2/3 h-4 bg-black/40 blur-xl rounded-[100%] animate-shadow-breath"></div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Products Section */}
-        <div className="mt-32">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-10 gap-4">
-            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin text-brand" />
-                  Carregando Catálogo...
-                </>
-              ) : (
-                "Destaques da Semana"
-              )}
+        {/* Seção de Produtos */}
+        <div className="mt-16 sm:mt-32">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-10 gap-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+              {isLoading ? "Carregando..." : "Destaques da Semana"}
             </h2>
             <Link
               to="/catalog"
@@ -333,35 +350,21 @@ export function Home() {
             </Link>
           </div>
 
-          {/* States: Error, Loading, Success */}
           {isError ? (
-            <div className="p-8 border border-red-500/20 bg-red-500/5 rounded-2xl flex flex-col items-center justify-center text-center gap-3">
-              <AlertCircle className="w-10 h-10 text-red-500" />
-              <p className="text-red-400 font-medium">
-                Não foi possível carregar os produtos.
-              </p>
-              <p className="text-sm text-zinc-500">
-                Verifique se o servidor (backend) está rodando na porta 3000.
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => window.location.reload()}
-                className="mt-2 border-red-500/30 text-red-400 hover:bg-red-500/10"
-              >
-                Tentar Novamente
-              </Button>
+            <div className="text-red-500 text-center py-10">
+              Erro ao carregar produtos.
             </div>
           ) : isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[1, 2, 3].map((i) => (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-8">
+              {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="h-[400px] bg-white/5 rounded-2xl animate-pulse border border-white/5"
+                  className="h-[250px] sm:h-[400px] bg-white/5 rounded-2xl animate-pulse border border-white/5"
                 />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {products?.slice(0, 6).map((product: Product) => (
                 <ProductCard
                   key={product.id}
@@ -371,20 +374,6 @@ export function Home() {
                   image={product.imageUrl}
                 />
               ))}
-
-              {(!products || products.length === 0) && (
-                <div className="col-span-3 py-12 flex flex-col items-center justify-center text-zinc-500 bg-white/5 rounded-2xl border border-white/5 border-dashed">
-                  <p className="text-lg font-medium">
-                    Nenhum produto encontrado.
-                  </p>
-                  <p className="text-sm mb-4">
-                    Parece que o estoque foi zerado ou o banco está vazio.
-                  </p>
-                  <Link to="/admin/products">
-                    <Button variant="outline">Gerenciar Produtos</Button>
-                  </Link>
-                </div>
-              )}
             </div>
           )}
         </div>

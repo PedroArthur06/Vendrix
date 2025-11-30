@@ -10,4 +10,8 @@ export default defineConfig({
       "@shared": path.resolve(__dirname, "../src/shared"),
     },
   },
+  server: {
+    host: true, // Isso expõe o IP na rede local automaticamente
+    port: 5173,
+  },
 });

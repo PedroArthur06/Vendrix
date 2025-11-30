@@ -14,7 +14,6 @@ interface ProductCardProps {
 
 export function ProductCard({ id, name, price, image }: ProductCardProps) {
   const formattedPrice = formatPrice(price);
-
   const { addToCart } = useCartStore();
   const navigate = useNavigate();
 
@@ -23,16 +22,13 @@ export function ProductCard({ id, name, price, image }: ProductCardProps) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     addToCart(product);
-    toast.success("Adicionado ao carrinho!");
+    toast.success("Adicionado!");
   };
 
   const handleBuyNow = (e: React.MouseEvent) => {
     e.stopPropagation();
-
     addToCart(product);
-
     const isAuthenticated = !!localStorage.getItem("vendrix:token");
-
     if (!isAuthenticated) {
       navigate("/login", { state: { from: "/checkout" } });
     } else {
@@ -41,39 +37,50 @@ export function ProductCard({ id, name, price, image }: ProductCardProps) {
   };
 
   return (
-    <div className="group relative flex flex-col rounded-2xl bg-neumo-bg p-6 shadow-neumo-flat transition-all hover:-translate-y-2 hover:shadow-lg hover:shadow-brand/10">
-      <div className="aspect-square w-full flex items-center justify-center mb-4 bg-neumo-bg rounded-xl shadow-neumo-pressed overflow-hidden relative">
-        <div className="absolute inset-0 bg-brand/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl rounded-full scale-50 group-hover:scale-100"></div>
-        <Link to={`/product/${id}`} className="contents">
-          <img
-            src={image}
-            alt={name}
-            loading="lazy"
-            className="w-full h-full object-cover object-center z-10 group-hover:scale-110 transition-transform duration-500 ease-out cursor-pointer"
-          />
-        </Link>
+    <div className="group relative flex flex-col w-full bg-neumo-bg p-3 sm:p-5 rounded-2xl shadow-neumo-flat transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-brand/5 h-full justify-between border border-white/5">
+      <div>
+        <div className="relative w-full aspect-square mb-3 sm:mb-4 bg-zinc-900/50 rounded-xl overflow-hidden shadow-inner border border-white/5 group-hover:border-brand/20 transition-colors">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
+
+          <Link
+            to={`/product/${id}`}
+            className="block w-full h-full cursor-pointer relative z-20"
+          >
+            <img
+              src={image}
+              alt={name}
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            />
+          </Link>
+        </div>
+
+        <div className="space-y-1">
+          <h3 className="text-sm sm:text-base font-bold text-white leading-tight line-clamp-2 min-h-[2.5em]">
+            {name}
+          </h3>
+          <p className="text-brand font-bold text-sm sm:text-lg">
+            {formattedPrice}
+          </p>
+        </div>
       </div>
 
-      <div className="mt-2">
-        <h3 className="text-lg font-bold text-white mb-1 truncate">{name}</h3>
-        <p className="text-brand font-medium text-lg">{formattedPrice}</p>
-      </div>
-
-      {/* CORREÇÃO AQUI: Div flex em vez de Button wrapper */}
-      <div className="mt-6 flex gap-3 w-full">
+      {/* Botões de Ação */}
+      <div className="mt-3 sm:mt-4 flex gap-2 w-full pt-3 border-t border-white/5">
         <Button
           variant="secondary"
-          className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white border border-white/5"
+          size="icon"
+          className="h-9 w-9 shrink-0 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-white/5 rounded-lg transition-colors"
           onClick={handleAddToCart}
         >
           <ShoppingCart className="w-4 h-4" />
         </Button>
 
         <Button
-          className="flex-[2] bg-brand hover:bg-brand/90 text-neumo-bg font-bold"
+          className="flex-1 h-9 bg-brand hover:bg-brand/90 text-neumo-bg font-bold text-[10px] sm:text-xs uppercase tracking-wide rounded-lg transition-all active:scale-95 px-2 sm:px-4 gap-1 sm:gap-2"
           onClick={handleBuyNow}
         >
-          <Zap className="w-4 h-4 mr-2" />
+          <Zap className="w-3 h-3 sm:mr-1.5" />
           Comprar
         </Button>
       </div>

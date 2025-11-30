@@ -95,5 +95,8 @@ export default {
       },
     },
   },
+  fontFamily: {
+    sans: ["Outfit", "sans-serif"],
+  },
   plugins: [require("tailwindcss-animate")],
 };

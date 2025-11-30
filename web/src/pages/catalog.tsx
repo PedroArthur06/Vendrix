@@ -1,8 +1,8 @@
-import { useSearchParams, Link } from "react-router-dom"; // Adicione Link aqui
+import { useSearchParams, Link } from "react-router-dom";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Filter, Loader2, ArrowLeft } from "lucide-react"; // Adicione ArrowLeft
+import { Search, Filter, Loader2, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -41,7 +41,6 @@ export function Catalog() {
   return (
     <div className="min-h-screen bg-neumo-bg p-8 pt-24">
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* NOVO BOTÃO DE VOLTAR */}
         <div className="flex items-center gap-4">
           <Link to="/">
             <Button
@@ -64,9 +63,7 @@ export function Catalog() {
           </div>
         </div>
 
-        {/* Barra de Busca e Filtros */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-          {/* (Removi o h1 duplicado daqui, já que coloquei acima junto com o botão) */}
           <div className="flex-1 w-full"></div>
 
           <div className="flex gap-2 w-full md:w-auto">
@@ -97,7 +94,7 @@ export function Catalog() {
             <Loader2 className="w-10 h-10 animate-spin text-brand" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {products.map((product: Product) => (
               <ProductCard
                 key={product.id}
