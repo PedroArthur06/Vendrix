@@ -27,7 +27,7 @@ type SignInForm = z.infer<typeof signInSchema>;
 export function SignIn() {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || "/admin/dashboard";
+  const from = location.state?.from || "/";
 
   const form = useForm<SignInForm>({
     resolver: zodResolver(signInSchema),

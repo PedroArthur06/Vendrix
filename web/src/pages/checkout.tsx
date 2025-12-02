@@ -26,6 +26,7 @@ import { useCartStore } from "@/stores/cart-store";
 import { checkoutSchema, type CheckoutFormValues } from "@/schemas/checkout";
 import { formatPrice } from "@/utils/formatPrice";
 import { toast } from "sonner";
+import { api } from "@/lib/api";
 
 export function Checkout() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -97,10 +98,28 @@ export function Checkout() {
 
   async function onSubmit(data: CheckoutFormValues) {
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    clearCart();
-    navigate("/order-confirmed");
+
+    try {
+      const orderItems = items.map((item) => ({
+        productId: item.id,
+        quantity: item.quantity,
+      }));
+
+      const response = await api.post("/checkout", {
+        items: orderItems,
+      });
+
+      if (response.data.url) {
+        window.location.href = response.data.url;
+      } else {
+        toast.error("Erro: O link de pagamento não foi gerado.");
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.error("Erro no checkout:", error);
+      toast.error("Falha ao iniciar pagamento. Tente novamente.");
+      setIsSubmitting(false);
+    }
   }
 
   if (items.length === 0) {
