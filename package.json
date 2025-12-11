@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "dotenv -e .env.test -- vitest",
-    "dev": "ts-node-dev --respawn --transpile-only src/shared/infra/http/server.ts",
     "build": "tsc",
-    "start": "node dist/shared/infra/http/server.js"
+    "start": "node dist/shared/infra/http/server.js",
+    "dev:server": "ts-node-dev --transpile-only --ignore-watch node_modules --respawn src/shared/infra/http/server.ts",
+    "dev:web": "npm run dev --prefix web",
+    "dev": "concurrently -n \"BACK,FRONT\" -c \"blue,magenta\" \"npm run dev:server\" \"npm run dev:web\""
   },
   "repository": {
     "type": "git",
@@ -40,6 +41,8 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.10.1",
     "@types/supertest": "^6.0.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "concurrently": "^9.2.1",
     "dotenv-cli": "^11.0.0",
     "prisma": "5.22.0",
     "supertest": "^7.1.4",
@@ -48,5 +51,8 @@
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^4.0.10"
-  }
+  },
+  "prisma": {
+  "seed": "ts-node prisma/seed.ts"
+}
 }
