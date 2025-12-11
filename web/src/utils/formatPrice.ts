@@ -36,7 +36,7 @@ export function formatPrice(
     const trimmed = value.trim();
     const normalized = trimmed
       .replace(/\s+/g, "")
-      .replace(/\./g, (m, i, s) => {
+      .replace(/\./g, (_m, _i, s) => {
         return s.includes(",") ? "" : "";
       })
       .replace(",", ".");

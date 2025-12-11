@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, MapPin, ShoppingBag } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -31,8 +31,7 @@ import { api } from "@/lib/api";
 export function Checkout() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingCep, setIsLoadingCep] = useState(false);
-  const navigate = useNavigate();
-  const { items, clearCart } = useCartStore();
+  const { items } = useCartStore();
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
@@ -96,7 +95,7 @@ export function Checkout() {
     0
   );
 
-  async function onSubmit(data: CheckoutFormValues) {
+  async function onSubmit(_data: CheckoutFormValues) {
     setIsSubmitting(true);
 
     try {
