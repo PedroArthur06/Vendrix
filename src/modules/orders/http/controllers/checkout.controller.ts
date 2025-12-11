@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Stripe from "stripe";
 import { prisma } from "../../../../shared/infra/database";
 import { AuthRequest } from "../../../../shared/infra/http/middlewares/auth.middleware";
+import { MailProvider } from "../../../../shared/providers/MailProvider";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2025-11-17.clover",
@@ -61,6 +62,13 @@ export class CheckoutController {
         },
       },
     });
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    if (user && user.email) {
+      const mailProvider = new MailProvider();
+      mailProvider.sendOrderConfirmation(user.email, order.id, Number(total), user.name);
+    }
 
     try {
       const session = await stripe.checkout.sessions.create({
